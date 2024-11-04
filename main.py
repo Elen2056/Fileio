@@ -4,7 +4,7 @@ import requests
 from tkinter import messagebox as mb
 from tkinter import filedialog as fd
 from tkinter import ttk
-
+import pyperclip
 def upload():
     try:
         filepath = fd.askopenfilename()
@@ -13,10 +13,12 @@ def upload():
                 files = {'file': f}
                 response = requests.post('https://file.io', files=files)
                 response.raise_for_status()  # Проверка на ошибки HTTP
-                download_link = response.json().get('link')
-                if download_link:
+                link = response.json().get('link')
+                if link:
                     entry.delete(0, END)
-                    entry.insert(0, download_link)
+                    entry.insert(0, link)
+                    pyperclip.copy(link)
+                    mb.showinfo("Папка скопирована", f"Ссылка {link} успешно скопирована в буфер обмена")
                 else:
                     raise ValueError("Не удалось получить ссылку для скачивания")
 
